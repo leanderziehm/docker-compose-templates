@@ -1,0 +1,36 @@
+services:
+  odoo:
+    image: docker.io/library/odoo:19
+    container_name: odoo
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    env_file: .env
+    environment:
+      HOST: ${DB_HOST}
+      PORT: ${DB_PORT}
+      USER: ${DB_USER}
+      PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - odoo-data:/var/lib/odoo
+    restart: always
+    init: true
+
+  db:
+    image: docker.io/library/postgres:15
+    container_name: odoo-db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/pgdata
+    restart: always
+    init: true
+
+volumes:
+  odoo-data:
+  postgres-data:
